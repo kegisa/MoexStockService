@@ -23,6 +23,7 @@ public class BondRepository {
 
     @Cacheable(value = "corps")
     public List<BondDto> getCorporateBonds() {
+        log.info("Getting corporate bonds from Moex");
         String xmlFromMoex = corporateBondsClient.getBondsFromMoex();
         List<BondDto> bonds = bondsParser.parse(xmlFromMoex);
         if(bonds.isEmpty()) {
@@ -34,6 +35,7 @@ public class BondRepository {
 
     @Cacheable(value = "govs")
     public List<BondDto> getGovBonds() {
+        log.info("Getting government bonds from Moex");
         String xmlFromMoex = govBondsClient.getBondsFromMoex();
 
         List<BondDto> bonds = bondsParser.parse(xmlFromMoex);

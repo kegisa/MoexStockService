@@ -24,6 +24,7 @@ public class BondService {
 
 
     public StocksDto getBondsFromMoex(TickersDto tickersDto) {
+        log.info("Request for tickers {}", tickersDto.getTickers());
         List<BondDto> resultBonds = new ArrayList<>();
         List<String> tickers = new ArrayList<>(tickersDto.getTickers());
         List<BondDto> govBonds = bondRepository.getGovBonds();
@@ -56,6 +57,7 @@ public class BondService {
     }
 
     public StocksPricesDto getPricesByFigies(FigiesDto figiesDto) {
+        log.info("Request for figies {}", figiesDto.getFigies());
         List<String> figies = new ArrayList<>(figiesDto.getFigies());
         List<BondDto> allBonds = new ArrayList<>();
         allBonds.addAll(bondRepository.getGovBonds());
@@ -66,7 +68,7 @@ public class BondService {
         }
         List<StockPrice> prices = allBonds.stream()
                 .filter(b -> figiesDto.getFigies().contains(b.getTicker()))
-                .map(b -> new StockPrice(b.getTicker(), b.getPrice()))
+                .map(b -> new StockPrice(b.getTicker(), b.getPrice() * 10))
                 .collect(Collectors.toList());
         return new StocksPricesDto(prices);
     }
