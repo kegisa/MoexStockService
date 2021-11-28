@@ -25,24 +25,16 @@ public class BondService {
 
     public StocksDto getBondsFromMoex(TickersDto tickersDto) {
         log.info("Request for tickers {}", tickersDto.getTickers());
-        List<BondDto> resultBonds = new ArrayList<>();
         List<String> tickers = new ArrayList<>(tickersDto.getTickers());
-        List<BondDto> govBonds = bondRepository.getGovBonds();
-        List<BondDto> resultGovBonds = govBonds.stream()
+
+
+        List<BondDto> allBonds = new ArrayList<>();
+        allBonds.addAll(bondRepository.getGovBonds());
+        allBonds.addAll(bondRepository.getCorporateBonds());
+        List<BondDto> resultBonds = allBonds.stream()
                 .filter(b -> tickers.contains(b.getTicker()))
                 .collect(Collectors.toList());
-        resultBonds.addAll(resultGovBonds);
-        List<String> foundedGovTickers = resultGovBonds.stream().map(gb -> gb.getTicker()).collect(Collectors.toList());
-        tickers.removeAll(foundedGovTickers);
-        if(!tickers.isEmpty()) {
-            List<BondDto> corpBonds = bondRepository.getCorporateBonds();
-            List<BondDto> resultCorpBonds = corpBonds.stream()
-                    .filter(b -> tickers.contains(b.getTicker()))
-                    .collect(Collectors.toList());
-            resultBonds.addAll(resultCorpBonds);
-            List<String> foundedCorpTickers = resultCorpBonds.stream().map(gb -> gb.getTicker()).collect(Collectors.toList());
-            tickers.removeAll(foundedCorpTickers);
-        }
+
         List<Stock> stocks =  resultBonds.stream().map(b -> {
             return Stock.builder()
                     .ticker(b.getTicker())
